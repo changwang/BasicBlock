@@ -5,6 +5,9 @@ Bundle-SymbolicName: BasicBlock
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: basicblock.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core;bundle-version="3.6.1",
+ org.junit,
+ org.eclipse.core.resources;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
