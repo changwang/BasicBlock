@@ -2,6 +2,7 @@ package basicblock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
@@ -14,6 +15,10 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 public class BasicBlockVisitor {
 
 	private List<BasicBlock> blocks = new ArrayList<BasicBlock>();
+	// this list always maintains the basicblocks which are the tail of its
+	// parent node
+	private List<BasicBlock> tailBlocks = new ArrayList<BasicBlock>();
+	private Stack<List<BasicBlock>> tails = new Stack<List<BasicBlock>>();
 	private BasicBlock currentBasicBlock = new BasicBlock();
 
 	private ASTNode root;
@@ -63,10 +68,11 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 *            assignment node
-	 * @return
+	 * @return basic block the node belongs to
 	 */
-	private void visitAssignment(ASTNode node) {
+	private BasicBlock visitAssignment(ASTNode node) {
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
+		return currentBasicBlock;
 	}
 
 	/**
@@ -76,18 +82,39 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private void visitIfStatement(ASTNode node) {
+	private BasicBlock visitIfStatement(ASTNode node) {
+		tailBlocks = new ArrayList<BasicBlock>();
+		BasicBlock ifBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
+
 		// reset current basic block to a new empty basic block
-		currentBasicBlock = createEmptyBasicBlock();
+		BasicBlock newBasicBlock = createEmptyBasicBlock();
+		// next true always points to its first child
+		ifBlock.setNextTrueBlock(newBasicBlock);
+		currentBasicBlock = newBasicBlock;
 		ASTNode thenStatement = ((IfStatement) node).getThenStatement();
-		visitChild(thenStatement); // thenstatement cannot be null
+		BasicBlock tailBlock = visitChild(thenStatement);
+		if (null != tailBlocks && null != tailBlock) {
+			tailBlocks.add(tailBlock);
+		}
+		tails.push(tailBlocks);
 
 		ASTNode elseStatement = ((IfStatement) node).getElseStatement();
 		if (null != elseStatement) {
-			currentBasicBlock = createEmptyBasicBlock();
-			visitChild(elseStatement);
+			newBasicBlock = createEmptyBasicBlock();
+			// if there is else statement, next false always points to it
+			ifBlock.setNextFalseBlock(newBasicBlock);
+			currentBasicBlock = newBasicBlock;
+			tailBlocks = tails.pop();
+			for (BasicBlock bb : tailBlocks) {
+				bb.setNextTrueBlock(currentBasicBlock);
+			}
+			tailBlock = visitChild(elseStatement);
+			
+			tailBlocks.add(tailBlock);
+			tails.push(tailBlocks);
 		}
+		return ifBlock;
 	}
 
 	/**
@@ -98,11 +125,15 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private void visitWhileStatement(ASTNode node) {
+	private BasicBlock visitWhileStatement(ASTNode node) {
+		BasicBlock whileBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		currentBasicBlock = createEmptyBasicBlock();
+		BasicBlock newBasicBlock = createEmptyBasicBlock();
+		whileBlock.setNextTrueBlock(newBasicBlock);
+		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((WhileStatement) node).getBody();
 		visitChild(bodyStatements); // bodyStatements cannot be null
+		return whileBlock;
 	}
 
 	/**
@@ -113,11 +144,15 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private void visitDoStatement(ASTNode node) {
+	private BasicBlock visitDoStatement(ASTNode node) {
+		BasicBlock doBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		currentBasicBlock = createEmptyBasicBlock();
+		BasicBlock newBasicBlock = createEmptyBasicBlock();
+		doBlock.setNextTrueBlock(newBasicBlock);
+		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((DoStatement) node).getBody();
 		visitChild(bodyStatements); // bodyStatements cannot be null
+		return doBlock;
 	}
 
 	/**
@@ -127,11 +162,15 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private void visitForStatement(ASTNode node) {
+	private BasicBlock visitForStatement(ASTNode node) {
+		BasicBlock forBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		currentBasicBlock = createEmptyBasicBlock();
+		BasicBlock newBasicBlock = createEmptyBasicBlock();
+		forBlock.setNextTrueBlock(newBasicBlock);
+		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((ForStatement) node).getBody();
 		visitChild(bodyStatements); // bodyStatements cannot be null
+		return forBlock;
 	}
 
 	/**
@@ -142,11 +181,15 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private void visitEnhancedForStatement(ASTNode node) {
+	private BasicBlock visitEnhancedForStatement(ASTNode node) {
+		BasicBlock forBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		currentBasicBlock = createEmptyBasicBlock();
+		BasicBlock newBasicBlock = createEmptyBasicBlock();
+		forBlock.setNextTrueBlock(newBasicBlock);
+		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((EnhancedForStatement) node).getBody();
 		visitChild(bodyStatements); // bodyStatements cannot be null
+		return forBlock;
 	}
 
 	/**
@@ -156,13 +199,74 @@ public class BasicBlockVisitor {
 	 * @param node
 	 *            block node
 	 */
-	private void visitBlock(ASTNode node) {
+	private BasicBlock visitBlock(ASTNode node) {
+		ASTNode prevNode = null;
+		BasicBlock prevBasicBlock = null;
 		List<ASTNode> statements = ((Block) node).statements();
 		if (statements.size() < 1)
-			return;
-		for (ASTNode child : statements) {
-			visitChild(child);
+			return null;
+		for (int i = 0; i < statements.size(); i++) {
+			if (null == prevNode) { // first time iterates the children
+				visitChild(statements.get(i));
+			} else {
+				if (Helper.isControlNode(prevNode)) {
+					currentBasicBlock = createEmptyBasicBlock();
+					visitChild(statements.get(i));
+					if (prevBasicBlock.getNextFalseBlock() == null) {
+						prevBasicBlock
+								.setNextFalseBlock(findBasicBlockHasGivenNode(statements
+										.get(i)));
+					}
+				} else {
+					visitChild(statements.get(i));
+				}
+			}
+
+			// if (i == statements.size() - 1) {
+			// if (tailBlocks.size() > 0) {
+			// // I should handle its true/false refs here.
+			// for (BasicBlock bb : tailBlocks) {
+			// if (prevNode.getNodeType() == ASTNode.IF_STATEMENT) {
+			// bb.setNextTrueBlock(findBasicBlockHasGivenNode(statements
+			// .get(i)));
+			// }
+			// if (Helper.isLoopControlNode(prevNode)) {
+			// bb.setNextTrueBlock(prevBasicBlock);
+			// }
+			// }
+			// // empty the tail blocks
+			// tailBlocks.clear();
+			// }
+			// }
+
+			prevNode = statements.get(i);
+			prevBasicBlock = findBasicBlockHasGivenNode(statements.get(i));
 		}
+
+		// always put last basic block into tail blocks
+		// tailBlocks.add(prevBasicBlock);
+
+		// always return last basic block
+		return prevBasicBlock;
+	}
+
+	/**
+	 * Find out the basic block which contains the given ASTNode
+	 * 
+	 * @param node
+	 *            given ASTNode
+	 * @return
+	 */
+	private BasicBlock findBasicBlockHasGivenNode(ASTNode node) {
+		if (null == node) {
+			return null;
+		}
+		for (BasicBlock bb : blocks) {
+			if (bb.hasAstNode(node)) {
+				return bb;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -170,28 +274,22 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param child
 	 */
-	private void visitChild(ASTNode child) {
+	private BasicBlock visitChild(ASTNode child) {
 		switch (child.getNodeType()) {
 		case ASTNode.IF_STATEMENT:
-			visitIfStatement(child);
-			break;
+			return visitIfStatement(child);
 		case ASTNode.WHILE_STATEMENT:
-			visitWhileStatement(child);
-			break;
+			return visitWhileStatement(child);
 		case ASTNode.DO_STATEMENT:
-			visitDoStatement(child);
-			break;
+			return visitDoStatement(child);
 		case ASTNode.FOR_STATEMENT:
-			visitForStatement(child);
-			break;
+			return visitForStatement(child);
 		case ASTNode.ENHANCED_FOR_STATEMENT:
-			visitEnhancedForStatement(child);
+			return visitEnhancedForStatement(child);
 		case ASTNode.BLOCK:
-			visitBlock(child);
-			break;
+			return visitBlock(child);
 		default:
-			visitAssignment(child);
-			break;
+			return visitAssignment(child);
 		}
 	}
 

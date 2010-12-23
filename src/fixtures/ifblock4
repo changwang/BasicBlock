@@ -1,0 +1,6 @@
+if (i > 0)
+	System.out.println(1);
+System.out.println(2);
+if (j < 10)
+	System.out.println(3);
+System.out.println(4);

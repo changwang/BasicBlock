@@ -24,7 +24,7 @@ public class Helper {
 		parser.setResolveBindings(true);
 		return parser;
 	}
-	
+
 	/**
 	 * Whether the AST node is a control node or not
 	 * 
@@ -45,6 +45,24 @@ public class Helper {
 		case ASTNode.CATCH_CLAUSE:
 		case ASTNode.CONTINUE_STATEMENT:
 		case ASTNode.BREAK_STATEMENT:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Whether the AST node is a loop control node or not
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public static boolean isLoopControlNode(ASTNode node) {
+		switch (node.getNodeType()) {
+		case ASTNode.DO_STATEMENT:
+		case ASTNode.WHILE_STATEMENT:
+		case ASTNode.FOR_STATEMENT:
+		case ASTNode.ENHANCED_FOR_STATEMENT:
 			return true;
 		default:
 			return false;

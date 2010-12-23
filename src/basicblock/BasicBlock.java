@@ -72,7 +72,7 @@ public class BasicBlock {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder("content:\n");
+		StringBuilder sb = new StringBuilder("Block:\t");
 		sb.append(this.getID());
 		// List<Node> nodes = this.getContent();
 		// for (Node node : nodes) {

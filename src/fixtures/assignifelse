@@ -1,0 +1,6 @@
+if (i < 2)
+	i++;
+else
+	if (j > 10)
+		System.out.println();
+int k = 100;
