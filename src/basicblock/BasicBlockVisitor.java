@@ -17,7 +17,7 @@ public class BasicBlockVisitor {
 	private List<BasicBlock> blocks = new ArrayList<BasicBlock>();
 	// this list always maintains the basicblocks which are the tail of its
 	// parent node
-	private List<BasicBlock> tailBlocks = new ArrayList<BasicBlock>();
+	// private List<BasicBlock> tailBlocks;
 	private Stack<List<BasicBlock>> tails = new Stack<List<BasicBlock>>();
 	private BasicBlock currentBasicBlock = new BasicBlock();
 
@@ -83,7 +83,7 @@ public class BasicBlockVisitor {
 	 * @param node
 	 */
 	private BasicBlock visitIfStatement(ASTNode node) {
-		tailBlocks = new ArrayList<BasicBlock>();
+		List<BasicBlock> tailBlocks = new ArrayList<BasicBlock>();
 		BasicBlock ifBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 
@@ -106,11 +106,11 @@ public class BasicBlockVisitor {
 			ifBlock.setNextFalseBlock(newBasicBlock);
 			currentBasicBlock = newBasicBlock;
 			tailBlocks = tails.pop();
-			for (BasicBlock bb : tailBlocks) {
-				bb.setNextTrueBlock(currentBasicBlock);
-			}
+			//for (BasicBlock bb : tailBlocks) {
+			//	bb.setNextTrueBlock(currentBasicBlock);
+			//}
 			tailBlock = visitChild(elseStatement);
-			
+
 			tailBlocks.add(tailBlock);
 			tails.push(tailBlocks);
 		}
@@ -200,54 +200,54 @@ public class BasicBlockVisitor {
 	 *            block node
 	 */
 	private BasicBlock visitBlock(ASTNode node) {
-		ASTNode prevNode = null;
-		BasicBlock prevBasicBlock = null;
+		ASTNode prevNode = null, currNode = null;
+		BasicBlock prevBasicBlock = null, currBasicBlock = null;
 		List<ASTNode> statements = ((Block) node).statements();
 		if (statements.size() < 1)
 			return null;
 		for (int i = 0; i < statements.size(); i++) {
+			currNode = statements.get(i);
 			if (null == prevNode) { // first time iterates the children
-				visitChild(statements.get(i));
+				currBasicBlock = visitChild(currNode);
 			} else {
 				if (Helper.isControlNode(prevNode)) {
 					currentBasicBlock = createEmptyBasicBlock();
-					visitChild(statements.get(i));
+					currBasicBlock = visitChild(currNode);
 					if (prevBasicBlock.getNextFalseBlock() == null) {
-						prevBasicBlock
-								.setNextFalseBlock(findBasicBlockHasGivenNode(statements
-										.get(i)));
+						prevBasicBlock.setNextFalseBlock(currBasicBlock);
 					}
 				} else {
-					visitChild(statements.get(i));
+					currBasicBlock = visitChild(currNode);
+				}
+
+				while (!tails.empty()) {
+					List<BasicBlock> tbs = tails.pop();
+					for (BasicBlock bb : tbs) {
+						switch (prevNode.getNodeType()) {
+						case ASTNode.IF_STATEMENT:
+							if (null == bb.getNextTrueBlock()) {
+								bb.setNextTrueBlock(currBasicBlock);
+							}
+							if (null == bb.getNextFalseBlock()
+									&& Helper
+											.isControlNode(bb.lastNodeInList())) {
+								bb.setNextFalseBlock(currBasicBlock);
+							}
+							continue;
+						case ASTNode.WHILE_STATEMENT:
+						case ASTNode.DO_STATEMENT:
+						case ASTNode.FOR_STATEMENT:
+						case ASTNode.ENHANCED_FOR_STATEMENT:
+							bb.setNextTrueBlock(prevBasicBlock);
+							continue;
+						}
+					}
 				}
 			}
-
-			// if (i == statements.size() - 1) {
-			// if (tailBlocks.size() > 0) {
-			// // I should handle its true/false refs here.
-			// for (BasicBlock bb : tailBlocks) {
-			// if (prevNode.getNodeType() == ASTNode.IF_STATEMENT) {
-			// bb.setNextTrueBlock(findBasicBlockHasGivenNode(statements
-			// .get(i)));
-			// }
-			// if (Helper.isLoopControlNode(prevNode)) {
-			// bb.setNextTrueBlock(prevBasicBlock);
-			// }
-			// }
-			// // empty the tail blocks
-			// tailBlocks.clear();
-			// }
-			// }
-
-			prevNode = statements.get(i);
-			prevBasicBlock = findBasicBlockHasGivenNode(statements.get(i));
+			prevNode = currNode;
+			prevBasicBlock = currBasicBlock;
 		}
-
-		// always put last basic block into tail blocks
-		// tailBlocks.add(prevBasicBlock);
-
-		// always return last basic block
-		return prevBasicBlock;
+		return currBasicBlock;
 	}
 
 	/**

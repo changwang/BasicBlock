@@ -1,6 +1,40 @@
-if (i < 2)
-	i++;
-else
-	if (j > 10)
-		System.out.println();
+if (i < 5)
+	if (i < 4)
+		if (i < 3)
+			if (i < 2)
+				if (i < 1)
+					System.out.println(1);
+                else
+                    System.out.println(2);
+            else
+                if (j > 1)
+                    System.out.println(3);
+                else
+                    System.out.println(4);
+        else
+            if (j < 2)
+                if (j < 1)
+					System.out.println(1);
+                else
+                    System.out.println(2);
+            else
+                System.out.println(6);
+	else
+		if (j < 3)
+			if (j < 2)
+                if (j < 1)
+					System.out.println(1);
+                else
+                    System.out.println(2);
+            else
+                System.out.println(6);
+		else
+			if (j < 2)
+                if (j < 1)
+					System.out.println(1);
+                else
+                    System.out.println(2);
+            else
+                System.out.println(6);
+
 int k = 100;

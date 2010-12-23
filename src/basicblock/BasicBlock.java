@@ -71,6 +71,18 @@ public class BasicBlock {
 		return false;
 	}
 
+	/**
+	 * get the last ast node in the content list
+	 * 
+	 * @return
+	 */
+	public ASTNode lastNodeInList() {
+		if (content.size() > 0) {
+			return content.get(content.size() - 1).getAstNode();
+		}
+		return null;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Block:\t");
 		sb.append(this.getID());

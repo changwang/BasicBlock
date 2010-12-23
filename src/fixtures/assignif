@@ -1,5 +1,5 @@
 int i = 0;
-if (i < 2) {
+if (a) {
 	i++;
 }
 int j = 10;
