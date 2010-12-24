@@ -23,7 +23,7 @@ public class BasicBlockVisitorTest {
 		bbv = new BasicBlockVisitor();
 	}
 
-	// @Test
+	@Test
 	public void assignmentBlock() {
 		String assignmentBlock = contentFromFixture("assignmentBlock");
 		ASTNode node = Helper.getParser(assignmentBlock).createAST(null);
@@ -68,7 +68,7 @@ public class BasicBlockVisitorTest {
 
 	}
 
-//	@Test
+	@Test
 	public void assignIfElse() {
 		String assignifelse = contentFromFixture("assignifelse");
 		ASTNode node = Helper.getParser(assignifelse).createAST(null);
@@ -76,27 +76,25 @@ public class BasicBlockVisitorTest {
 		bbv.setRoot(node);
 		bbv.start();
 
-		assertEquals(14, bbv.getBlocks().size());
+		assertEquals(8, bbv.getBlocks().size());
 
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
-				.getBlocks().get(10));
+				.getBlocks().get(4));
 
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
-				.getBlocks().get(10));
+				.getBlocks().get(3));
 
 		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
-				.get(3));
-		assertEquals(bbv.getBlocks().get(2).getNextFalseBlock(), bbv
-				.getBlocks().get(10));
+				.get(7));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
-				.get(4));
-		assertEquals(bbv.getBlocks().get(3).getNextFalseBlock(), bbv
-				.getBlocks().get(7));
+				.get(7));
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
 				.get(5));
@@ -104,28 +102,15 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(6));
 
 		assertEquals(bbv.getBlocks().get(5).getNextTrueBlock(), bbv.getBlocks()
-				.get(10));
+				.get(7));
 		assertNull(bbv.getBlocks().get(5).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(6).getNextTrueBlock(), bbv.getBlocks()
-				.get(10));
+				.get(7));
 		assertNull(bbv.getBlocks().get(6).getNextFalseBlock());
-
-		assertEquals(bbv.getBlocks().get(7).getNextTrueBlock(), bbv.getBlocks()
-				.get(8));
-		assertEquals(bbv.getBlocks().get(7).getNextFalseBlock(), bbv
-				.getBlocks().get(9));
-
-		assertEquals(bbv.getBlocks().get(8).getNextTrueBlock(), bbv.getBlocks()
-				.get(10));
-		assertNull(bbv.getBlocks().get(8).getNextFalseBlock());
-
-		assertEquals(bbv.getBlocks().get(9).getNextTrueBlock(), bbv.getBlocks()
-				.get(10));
-		assertNull(bbv.getBlocks().get(9).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifStatement1() {
 		String ifblock = contentFromFixture("ifblock1");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -146,7 +131,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifStatement2() {
 		String ifblock = contentFromFixture("ifblock2");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -167,7 +152,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifStatement3() {
 		String ifblock = contentFromFixture("ifblock3");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -193,7 +178,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifStatement4() {
 		String ifblock = contentFromFixture("ifblock4");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -218,7 +203,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(4));
 	}
 
-	// @Test
+	@Test
 	public void ifStatement5() {
 		String ifblock = contentFromFixture("ifblock5");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -240,7 +225,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifStatement6() {
 		String ifblock = contentFromFixture("ifblock6");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -263,7 +248,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(3));
 	}
 
-	// @Test
+	@Test
 	public void ifStatement7() {
 		String ifblock = contentFromFixture("ifblock7");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
@@ -286,7 +271,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(3));
 	}
 
-	// @Test
+	@Test
 	public void ifElseStatement1() {
 		String ifelseblock = contentFromFixture("ifelseblock");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
@@ -314,7 +299,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifElseStatement2() {
 		String ifelseblock = contentFromFixture("ifelseblock2");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
@@ -342,7 +327,7 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void ifElseStatement3() {
 		String ifelseblock = contentFromFixture("ifelseblock3");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
@@ -374,7 +359,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(7));
 	}
 
-	// @Test
+	@Test
 	public void whileStatement1() {
 		String whileblock1 = contentFromFixture("whileblock1");
 		ASTNode node = Helper.getParser(whileblock1).createAST(null);
@@ -382,21 +367,33 @@ public class BasicBlockVisitorTest {
 		bbv.setRoot(node);
 		bbv.start();
 
-		assertEquals(2, bbv.getBlocks().size());
+		assertEquals(5, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
-		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
-		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
+				.get(2));
+		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
+				.getBlocks().get(0));
+
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(3));
+		assertEquals(bbv.getBlocks().get(2).getNextFalseBlock(), bbv
+				.getBlocks().get(1));
+
+		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
+				.get(4));
+		assertEquals(bbv.getBlocks().get(3).getNextFalseBlock(), bbv
+				.getBlocks().get(2));
+
+		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
+				.get(3));
+		assertNull(bbv.getBlocks().get(4).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void whileStatement2() {
 		String whileblock2 = contentFromFixture("whileblock2");
 		ASTNode node = Helper.getParser(whileblock2).createAST(null);
@@ -416,10 +413,11 @@ public class BasicBlockVisitorTest {
 		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
-		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
+				.getBlocks().get(0));
 	}
 
-	// @Test
+	@Test
 	public void whileStatement3() {
 		String whileblock3 = contentFromFixture("whileblock3");
 		ASTNode node = Helper.getParser(whileblock3).createAST(null);
@@ -443,7 +441,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(3));
 	}
 
-	// @Test
+	@Test
 	public void whileStatement4() {
 		String whileblock4 = contentFromFixture("whileblock4");
 		ASTNode node = Helper.getParser(whileblock4).createAST(null);
@@ -474,7 +472,7 @@ public class BasicBlockVisitorTest {
 				.getBlocks().get(4));
 	}
 
-	// @Test
+	@Test
 	public void forStatement1() {
 		String forblock1 = contentFromFixture("forblock1");
 		ASTNode node = Helper.getParser(forblock1).createAST(null);
@@ -492,11 +490,12 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(2, bbv.getBlocks().get(1).getID());
 		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
-		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
+		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
+				.get(0));
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void forStatement2() {
 		String forblock2 = contentFromFixture("forblock2");
 		ASTNode node = Helper.getParser(forblock2).createAST(null);
@@ -506,27 +505,30 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(5, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
 
-		assertEquals(4, bbv.getBlocks().get(3).getID());
-		assertEquals(1, bbv.getBlocks().get(3).getContent().size());
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(1));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
 		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
 				.get(4));
-		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(3).getNextFalseBlock(), bbv
+				.getBlocks().get(0));
+
+		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
+				.get(3));
+		assertNull(bbv.getBlocks().get(4).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void mix1() {
 		String mix1 = contentFromFixture("mixblock1");
 		ASTNode node = Helper.getParser(mix1).createAST(null);
@@ -536,27 +538,25 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(5, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
 
-		assertEquals(4, bbv.getBlocks().get(3).getID());
-		assertEquals(1, bbv.getBlocks().get(3).getContent().size());
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(1));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
 		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
 				.get(4));
 		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
 	}
 
-	// @Test
+	@Test
 	public void mix2() {
 		String mix2 = contentFromFixture("mixblock2");
 		ASTNode node = Helper.getParser(mix2).createAST(null);
@@ -564,52 +564,54 @@ public class BasicBlockVisitorTest {
 		bbv.setRoot(node);
 		bbv.start();
 
-		assertEquals(11, bbv.getBlocks().size());
+		assertEquals(12, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
 				.getBlocks().get(6));
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
-		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
+				.getBlocks().get(11));
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(1, bbv.getBlocks().get(2).getContent().size());
 		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
 				.get(3));
-		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(2).getNextFalseBlock(), bbv
+				.getBlocks().get(1));
 
-		assertEquals(4, bbv.getBlocks().get(3).getID());
-		assertEquals(1, bbv.getBlocks().get(3).getContent().size());
 		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
 				.get(4));
 		assertEquals(bbv.getBlocks().get(3).getNextFalseBlock(), bbv
 				.getBlocks().get(5));
 
-		assertEquals(7, bbv.getBlocks().get(6).getID());
-		assertEquals(1, bbv.getBlocks().get(6).getContent().size());
+		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
+				.get(2));
+
+		assertEquals(bbv.getBlocks().get(5).getNextTrueBlock(), bbv.getBlocks()
+				.get(2));
+
 		assertEquals(bbv.getBlocks().get(6).getNextTrueBlock(), bbv.getBlocks()
 				.get(7));
-		assertNull(bbv.getBlocks().get(6).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
+				.getBlocks().get(11));
 
-		assertEquals(8, bbv.getBlocks().get(7).getID());
-		assertEquals(1, bbv.getBlocks().get(7).getContent().size());
 		assertEquals(bbv.getBlocks().get(7).getNextTrueBlock(), bbv.getBlocks()
 				.get(8));
-		assertNull(bbv.getBlocks().get(7).getNextFalseBlock());
+		assertEquals(bbv.getBlocks().get(7).getNextFalseBlock(), bbv
+				.getBlocks().get(6));
 
-		assertEquals(9, bbv.getBlocks().get(8).getID());
-		assertEquals(1, bbv.getBlocks().get(8).getContent().size());
 		assertEquals(bbv.getBlocks().get(8).getNextTrueBlock(), bbv.getBlocks()
 				.get(9));
 		assertEquals(bbv.getBlocks().get(8).getNextFalseBlock(), bbv
 				.getBlocks().get(10));
+
+		assertEquals(bbv.getBlocks().get(9).getNextTrueBlock(), bbv.getBlocks()
+				.get(7));
+
+		assertEquals(bbv.getBlocks().get(10).getNextTrueBlock(), bbv
+				.getBlocks().get(7));
 	}
 
 	@After

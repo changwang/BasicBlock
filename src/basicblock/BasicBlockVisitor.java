@@ -2,7 +2,6 @@ package basicblock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
@@ -15,10 +14,6 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 public class BasicBlockVisitor {
 
 	private List<BasicBlock> blocks = new ArrayList<BasicBlock>();
-	// this list always maintains the basicblocks which are the tail of its
-	// parent node
-	// private List<BasicBlock> tailBlocks;
-	private Stack<List<BasicBlock>> tails = new Stack<List<BasicBlock>>();
 	private BasicBlock currentBasicBlock = new BasicBlock();
 
 	private ASTNode root;
@@ -70,9 +65,11 @@ public class BasicBlockVisitor {
 	 *            assignment node
 	 * @return basic block the node belongs to
 	 */
-	private BasicBlock visitAssignment(ASTNode node) {
+	private List<BasicBlock> visitAssignment(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		return currentBasicBlock;
+		unhandledBlocks.add(currentBasicBlock);
+		return unhandledBlocks;
 	}
 
 	/**
@@ -82,8 +79,8 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private BasicBlock visitIfStatement(ASTNode node) {
-		List<BasicBlock> tailBlocks = new ArrayList<BasicBlock>();
+	private List<BasicBlock> visitIfStatement(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		BasicBlock ifBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 
@@ -93,28 +90,19 @@ public class BasicBlockVisitor {
 		ifBlock.setNextTrueBlock(newBasicBlock);
 		currentBasicBlock = newBasicBlock;
 		ASTNode thenStatement = ((IfStatement) node).getThenStatement();
-		BasicBlock tailBlock = visitChild(thenStatement);
-		if (null != tailBlocks && null != tailBlock) {
-			tailBlocks.add(tailBlock);
-		}
-		tails.push(tailBlocks);
-
+		List<BasicBlock> subUnhandled = visitChild(thenStatement);
+		unhandledBlocks.addAll(subUnhandled);
 		ASTNode elseStatement = ((IfStatement) node).getElseStatement();
 		if (null != elseStatement) {
 			newBasicBlock = createEmptyBasicBlock();
 			// if there is else statement, next false always points to it
 			ifBlock.setNextFalseBlock(newBasicBlock);
 			currentBasicBlock = newBasicBlock;
-			tailBlocks = tails.pop();
-			//for (BasicBlock bb : tailBlocks) {
-			//	bb.setNextTrueBlock(currentBasicBlock);
-			//}
-			tailBlock = visitChild(elseStatement);
-
-			tailBlocks.add(tailBlock);
-			tails.push(tailBlocks);
+			unhandledBlocks.addAll(visitChild(elseStatement));
+		} else {
+			unhandledBlocks.add(ifBlock);
 		}
-		return ifBlock;
+		return unhandledBlocks;
 	}
 
 	/**
@@ -125,15 +113,29 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private BasicBlock visitWhileStatement(ASTNode node) {
+	private List<BasicBlock> visitWhileStatement(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		BasicBlock whileBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 		BasicBlock newBasicBlock = createEmptyBasicBlock();
 		whileBlock.setNextTrueBlock(newBasicBlock);
 		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((WhileStatement) node).getBody();
-		visitChild(bodyStatements); // bodyStatements cannot be null
-		return whileBlock;
+		unhandledBlocks = visitChild(bodyStatements);
+		if (unhandledBlocks.size() > 0) {
+			for (BasicBlock bb : unhandledBlocks) {
+				if (Helper.isControlNode(bb.lastNodeInList())) {
+					if (null == bb.getNextFalseBlock()) {
+						bb.setNextFalseBlock(whileBlock);
+					}
+				} else {
+					bb.setNextTrueBlock(whileBlock);
+				}
+			}
+		}
+		unhandledBlocks.clear();
+		unhandledBlocks.add(whileBlock);
+		return unhandledBlocks;
 	}
 
 	/**
@@ -144,15 +146,29 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private BasicBlock visitDoStatement(ASTNode node) {
-		BasicBlock doBlock = currentBasicBlock;
+	private List<BasicBlock> visitDoStatement(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
+		BasicBlock whileBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 		BasicBlock newBasicBlock = createEmptyBasicBlock();
-		doBlock.setNextTrueBlock(newBasicBlock);
+		whileBlock.setNextTrueBlock(newBasicBlock);
 		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((DoStatement) node).getBody();
-		visitChild(bodyStatements); // bodyStatements cannot be null
-		return doBlock;
+		unhandledBlocks = visitChild(bodyStatements);
+		if (unhandledBlocks.size() > 0) {
+			for (BasicBlock bb : unhandledBlocks) {
+				if (Helper.isControlNode(bb.lastNodeInList())) {
+					if (null == bb.getNextFalseBlock()) {
+						bb.setNextFalseBlock(whileBlock);
+					}
+				} else {
+					bb.setNextTrueBlock(whileBlock);
+				}
+			}
+		}
+		unhandledBlocks.clear();
+		unhandledBlocks.add(whileBlock);
+		return unhandledBlocks;
 	}
 
 	/**
@@ -162,15 +178,29 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private BasicBlock visitForStatement(ASTNode node) {
+	private List<BasicBlock> visitForStatement(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		BasicBlock forBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 		BasicBlock newBasicBlock = createEmptyBasicBlock();
 		forBlock.setNextTrueBlock(newBasicBlock);
 		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((ForStatement) node).getBody();
-		visitChild(bodyStatements); // bodyStatements cannot be null
-		return forBlock;
+		unhandledBlocks = visitChild(bodyStatements);
+		if (unhandledBlocks.size() > 0) {
+			for (BasicBlock bb : unhandledBlocks) {
+				if (Helper.isControlNode(bb.lastNodeInList())) {
+					if (null == bb.getNextFalseBlock()) {
+						bb.setNextFalseBlock(forBlock);
+					}
+				} else {
+					bb.setNextTrueBlock(forBlock);
+				}
+			}
+		}
+		unhandledBlocks.clear();
+		unhandledBlocks.add(forBlock);
+		return unhandledBlocks;
 	}
 
 	/**
@@ -181,15 +211,29 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param node
 	 */
-	private BasicBlock visitEnhancedForStatement(ASTNode node) {
+	private List<BasicBlock> visitEnhancedForStatement(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		BasicBlock forBlock = currentBasicBlock;
 		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
 		BasicBlock newBasicBlock = createEmptyBasicBlock();
 		forBlock.setNextTrueBlock(newBasicBlock);
 		currentBasicBlock = newBasicBlock;
 		ASTNode bodyStatements = ((EnhancedForStatement) node).getBody();
-		visitChild(bodyStatements); // bodyStatements cannot be null
-		return forBlock;
+		unhandledBlocks = visitChild(bodyStatements);
+		if (unhandledBlocks.size() > 0) {
+			for (BasicBlock bb : unhandledBlocks) {
+				if (Helper.isControlNode(bb.lastNodeInList())) {
+					if (null == bb.getNextFalseBlock()) {
+						bb.setNextFalseBlock(forBlock);
+					}
+				} else {
+					bb.setNextTrueBlock(forBlock);
+				}
+			}
+		}
+		unhandledBlocks.clear();
+		unhandledBlocks.add(forBlock);
+		return unhandledBlocks;
 	}
 
 	/**
@@ -199,74 +243,33 @@ public class BasicBlockVisitor {
 	 * @param node
 	 *            block node
 	 */
-	private BasicBlock visitBlock(ASTNode node) {
+	private List<BasicBlock> visitBlock(ASTNode node) {
+		List<BasicBlock> unhandledBlocks = null;
 		ASTNode prevNode = null, currNode = null;
-		BasicBlock prevBasicBlock = null, currBasicBlock = null;
 		List<ASTNode> statements = ((Block) node).statements();
-		if (statements.size() < 1)
-			return null;
 		for (int i = 0; i < statements.size(); i++) {
 			currNode = statements.get(i);
-			if (null == prevNode) { // first time iterates the children
-				currBasicBlock = visitChild(currNode);
-			} else {
+			if (unhandledBlocks != null) {
 				if (Helper.isControlNode(prevNode)) {
 					currentBasicBlock = createEmptyBasicBlock();
-					currBasicBlock = visitChild(currNode);
-					if (prevBasicBlock.getNextFalseBlock() == null) {
-						prevBasicBlock.setNextFalseBlock(currBasicBlock);
-					}
-				} else {
-					currBasicBlock = visitChild(currNode);
 				}
-
-				while (!tails.empty()) {
-					List<BasicBlock> tbs = tails.pop();
-					for (BasicBlock bb : tbs) {
-						switch (prevNode.getNodeType()) {
-						case ASTNode.IF_STATEMENT:
-							if (null == bb.getNextTrueBlock()) {
-								bb.setNextTrueBlock(currBasicBlock);
-							}
-							if (null == bb.getNextFalseBlock()
-									&& Helper
-											.isControlNode(bb.lastNodeInList())) {
-								bb.setNextFalseBlock(currBasicBlock);
-							}
-							continue;
-						case ASTNode.WHILE_STATEMENT:
-						case ASTNode.DO_STATEMENT:
-						case ASTNode.FOR_STATEMENT:
-						case ASTNode.ENHANCED_FOR_STATEMENT:
-							bb.setNextTrueBlock(prevBasicBlock);
-							continue;
+				for (BasicBlock bb : unhandledBlocks) {
+					if (prevNode.getNodeType() == ASTNode.IF_STATEMENT) {
+						if (Helper.isControlNode(bb.lastNodeInList())) {
+							bb.setNextFalseBlock(currentBasicBlock);
+						} else {
+							bb.setNextTrueBlock(currentBasicBlock);
 						}
 					}
+					if (Helper.isLoopControlNode(prevNode)) {
+						bb.setNextFalseBlock(currentBasicBlock);
+					}
 				}
 			}
+			unhandledBlocks = visitChild(currNode);
 			prevNode = currNode;
-			prevBasicBlock = currBasicBlock;
 		}
-		return currBasicBlock;
-	}
-
-	/**
-	 * Find out the basic block which contains the given ASTNode
-	 * 
-	 * @param node
-	 *            given ASTNode
-	 * @return
-	 */
-	private BasicBlock findBasicBlockHasGivenNode(ASTNode node) {
-		if (null == node) {
-			return null;
-		}
-		for (BasicBlock bb : blocks) {
-			if (bb.hasAstNode(node)) {
-				return bb;
-			}
-		}
-		return null;
+		return unhandledBlocks;
 	}
 
 	/**
@@ -274,7 +277,7 @@ public class BasicBlockVisitor {
 	 * 
 	 * @param child
 	 */
-	private BasicBlock visitChild(ASTNode child) {
+	private List<BasicBlock> visitChild(ASTNode child) {
 		switch (child.getNodeType()) {
 		case ASTNode.IF_STATEMENT:
 			return visitIfStatement(child);

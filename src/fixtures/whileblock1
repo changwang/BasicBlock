@@ -1,2 +1,9 @@
-while (i < 0)
-	System.out.println();
+do
+    do
+        do
+            do
+                System.out.println();
+            while (a);
+        while (b);
+    while (c);
+while (d);
