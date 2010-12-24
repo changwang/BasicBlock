@@ -26,7 +26,7 @@ public class Helper {
 	}
 
 	/**
-	 * Whether the AST node is a control node or not
+	 * whether the AST node is a control node or not
 	 * 
 	 * @param node
 	 *            current visiting node
@@ -52,7 +52,7 @@ public class Helper {
 	}
 
 	/**
-	 * Whether the AST node is a loop control node or not
+	 * whether the AST node is a loop control node or not
 	 * 
 	 * @param node
 	 * @return

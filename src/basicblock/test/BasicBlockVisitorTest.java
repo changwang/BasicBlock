@@ -62,7 +62,6 @@ public class BasicBlockVisitorTest {
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 
 		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(1, bbv.getBlocks().get(2).getContent().size());
 		assertNull(bbv.getBlocks().get(2).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 
@@ -120,13 +119,10 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(2, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
@@ -141,13 +137,10 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(2, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 	}
@@ -162,18 +155,14 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(3, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
+		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(1, bbv.getBlocks().get(2).getContent().size());
 		assertNull(bbv.getBlocks().get(2).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
@@ -188,19 +177,26 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(5, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
 				.getBlocks().get(2));
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(2, bbv.getBlocks().get(2).getContent().size());
+		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
+				.get(2));
+		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
+
 		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
 				.get(3));
 		assertEquals(bbv.getBlocks().get(2).getNextFalseBlock(), bbv
 				.getBlocks().get(4));
+
+		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
+				.get(4));
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(4).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(4).getNextFalseBlock());
 	}
 
 	@Test
@@ -213,16 +209,16 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(3, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(2).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
 
 	@Test
@@ -235,17 +231,21 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(4, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
+
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(3));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(3).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
 	}
 
 	@Test
@@ -258,17 +258,21 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(4, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
+
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(3));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(3).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
 	}
 
 	@Test
@@ -281,20 +285,14 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(3, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
 				.getBlocks().get(2));
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(2, bbv.getBlocks().get(2).getContent().size());
 		assertNull(bbv.getBlocks().get(2).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
@@ -309,20 +307,14 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(3, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
 				.getBlocks().get(2));
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertNull(bbv.getBlocks().get(1).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(1, bbv.getBlocks().get(2).getContent().size());
 		assertNull(bbv.getBlocks().get(2).getNextTrueBlock());
 		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
@@ -337,26 +329,42 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(9, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertEquals(bbv.getBlocks().get(0).getNextFalseBlock(), bbv
 				.getBlocks().get(5));
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
 
-		assertEquals(6, bbv.getBlocks().get(5).getID());
-		assertEquals(2, bbv.getBlocks().get(5).getContent().size());
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(4));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
+		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
+				.get(4));
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(4).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(4).getNextFalseBlock());
+
 		assertEquals(bbv.getBlocks().get(5).getNextTrueBlock(), bbv.getBlocks()
 				.get(6));
 		assertEquals(bbv.getBlocks().get(5).getNextFalseBlock(), bbv
 				.getBlocks().get(7));
+
+		assertEquals(bbv.getBlocks().get(6).getNextTrueBlock(), bbv.getBlocks()
+				.get(8));
+		assertNull(bbv.getBlocks().get(6).getNextFalseBlock());
+
+		assertEquals(bbv.getBlocks().get(7).getNextTrueBlock(), bbv.getBlocks()
+				.get(8));
+		assertNull(bbv.getBlocks().get(7).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(8).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(8).getNextFalseBlock());
 	}
 
 	@Test
@@ -403,18 +411,18 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(3, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(0));
+
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(1));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
 	}
 
 	@Test
@@ -427,18 +435,22 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(4, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(3));
+
+		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
+				.get(1));
+		assertNull(bbv.getBlocks().get(2).getNextFalseBlock());
+
+		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
+				.get(0));
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
 	}
 
 	@Test
@@ -451,25 +463,31 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(6, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(2, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
 		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
 				.getBlocks().get(5));
 
-		assertEquals(3, bbv.getBlocks().get(2).getID());
-		assertEquals(2, bbv.getBlocks().get(2).getContent().size());
 		assertEquals(bbv.getBlocks().get(2).getNextTrueBlock(), bbv.getBlocks()
 				.get(3));
 		assertEquals(bbv.getBlocks().get(2).getNextFalseBlock(), bbv
 				.getBlocks().get(4));
+
+		assertEquals(bbv.getBlocks().get(3).getNextTrueBlock(), bbv.getBlocks()
+				.get(2));
+		assertNull(bbv.getBlocks().get(3).getNextFalseBlock());
+
+		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
+				.get(1));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
+
+		assertEquals(bbv.getBlocks().get(5).getNextTrueBlock(), bbv.getBlocks()
+				.get(0));
+		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 	}
 
 	@Test
@@ -482,14 +500,10 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(2, bbv.getBlocks().size());
 
-		assertEquals(1, bbv.getBlocks().get(0).getID());
-		assertEquals(1, bbv.getBlocks().get(0).getContent().size());
 		assertEquals(bbv.getBlocks().get(0).getNextTrueBlock(), bbv.getBlocks()
 				.get(1));
 		assertNull(bbv.getBlocks().get(0).getNextFalseBlock());
 
-		assertEquals(2, bbv.getBlocks().get(1).getID());
-		assertEquals(1, bbv.getBlocks().get(1).getContent().size());
 		assertEquals(bbv.getBlocks().get(1).getNextTrueBlock(), bbv.getBlocks()
 				.get(0));
 		assertNull(bbv.getBlocks().get(1).getNextFalseBlock());
@@ -588,13 +602,15 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(bbv.getBlocks().get(4).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
+		assertNull(bbv.getBlocks().get(4).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(5).getNextTrueBlock(), bbv.getBlocks()
 				.get(2));
+		assertNull(bbv.getBlocks().get(5).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(6).getNextTrueBlock(), bbv.getBlocks()
 				.get(7));
-		assertEquals(bbv.getBlocks().get(1).getNextFalseBlock(), bbv
+		assertEquals(bbv.getBlocks().get(6).getNextFalseBlock(), bbv
 				.getBlocks().get(11));
 
 		assertEquals(bbv.getBlocks().get(7).getNextTrueBlock(), bbv.getBlocks()
@@ -609,9 +625,14 @@ public class BasicBlockVisitorTest {
 
 		assertEquals(bbv.getBlocks().get(9).getNextTrueBlock(), bbv.getBlocks()
 				.get(7));
+		assertNull(bbv.getBlocks().get(9).getNextFalseBlock());
 
 		assertEquals(bbv.getBlocks().get(10).getNextTrueBlock(), bbv
 				.getBlocks().get(7));
+		assertNull(bbv.getBlocks().get(10).getNextFalseBlock());
+
+		assertNull(bbv.getBlocks().get(11).getNextTrueBlock());
+		assertNull(bbv.getBlocks().get(11).getNextFalseBlock());
 	}
 
 	@After

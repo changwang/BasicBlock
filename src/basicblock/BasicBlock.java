@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class BasicBlock {
 
@@ -56,22 +61,6 @@ public class BasicBlock {
 	}
 
 	/**
-	 * Whether the list contains the given ASTNode
-	 * 
-	 * @param node
-	 * @return true if it has, otherwise false
-	 */
-	public boolean hasAstNode(ASTNode node) {
-		List<Node> nodes = this.getContent();
-		for (Node n : nodes) {
-			if (n.getAstNode() == node) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * get the last ast node in the content list
 	 * 
 	 * @return
@@ -83,44 +72,58 @@ public class BasicBlock {
 		return null;
 	}
 
+	/**
+	 * make the basic block readable in console
+	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Block:\t");
 		sb.append(this.getID());
-		// List<Node> nodes = this.getContent();
-		// for (Node node : nodes) {
-		// switch (node.getType()) {
-		// case ASTNode.IF_STATEMENT:
-		// sb.append("If Statement with expression: "
-		// + ((IfStatement) node.getAstNode()).getExpression()
-		// .toString() + "\n");
-		// break;
-		// case ASTNode.WHILE_STATEMENT:
-		// sb.append("While Statement with expression: "
-		// + ((WhileStatement) node.getAstNode()).getExpression()
-		// .toString() + "\n");
-		// break;
-		// case ASTNode.DO_STATEMENT:
-		// sb.append("While Statement with expression: "
-		// + ((DoStatement) node.getAstNode()).getExpression()
-		// .toString() + "\n");
-		// break;
-		// case ASTNode.FOR_STATEMENT:
-		// sb.append("For Statement with expression: "
-		// + ((ForStatement) node.getAstNode()).getExpression()
-		// .toString() + "\n");
-		// break;
-		// case ASTNode.ENHANCED_FOR_STATEMENT:
-		// sb.append("For Statement with expression: "
-		// + ((EnhancedForStatement) node.getAstNode())
-		// .getExpression().toString() + "\n");
-		// break;
-		// default:
-		// sb.append("Statement: " + node.getAstNode().toString());
-		// break;
-		// }
-		// }
-		// sb.append("Next True Block is: " + getNextTrueID() + "\n");
-		// sb.append("Next False Block is: " + getNextFalseID() + "\n");
+		List<Node> nodes = this.getContent();
+		for (Node node : nodes) {
+			switch (node.getType()) {
+			case ASTNode.IF_STATEMENT:
+				sb.append("If Statement with expression: "
+						+ ((IfStatement) node.getAstNode()).getExpression()
+								.toString() + "\n");
+				break;
+			case ASTNode.WHILE_STATEMENT:
+				sb.append("While Statement with expression: "
+						+ ((WhileStatement) node.getAstNode()).getExpression()
+								.toString() + "\n");
+				break;
+			case ASTNode.DO_STATEMENT:
+				sb.append("While Statement with expression: "
+						+ ((DoStatement) node.getAstNode()).getExpression()
+								.toString() + "\n");
+				break;
+			case ASTNode.FOR_STATEMENT:
+				sb.append("For Statement with expression: "
+						+ ((ForStatement) node.getAstNode()).getExpression()
+								.toString() + "\n");
+				break;
+			case ASTNode.ENHANCED_FOR_STATEMENT:
+				sb.append("For Statement with expression: "
+						+ ((EnhancedForStatement) node.getAstNode())
+								.getExpression().toString() + "\n");
+				break;
+			default:
+				sb.append("Statement: " + node.getAstNode().toString());
+				break;
+			}
+		}
+		if (null == getNextTrueBlock()) {
+			sb.append("Reaching the end");
+		} else {
+			sb.append("Next True Block is: " + getNextTrueBlock().getID()
+					+ "\n");
+		}
+
+		if (null == getNextFalseBlock()) {
+			sb.append("Reaching the end");
+		} else {
+			sb.append("Next False Block is: " + getNextFalseBlock().getID()
+					+ "\n");
+		}
 		return sb.toString();
 	}
 }

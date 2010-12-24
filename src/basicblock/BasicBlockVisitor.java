@@ -13,8 +13,10 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 
 public class BasicBlockVisitor {
 
+	// records all the generated basic blocks in this list
 	private List<BasicBlock> blocks = new ArrayList<BasicBlock>();
-	private BasicBlock currentBasicBlock = new BasicBlock();
+
+	private BasicBlock currentBasicBlock = null;
 
 	private ASTNode root;
 
@@ -23,7 +25,7 @@ public class BasicBlockVisitor {
 	}
 
 	public BasicBlockVisitor(ASTNode root) {
-		this.root = root;
+		setRoot(root);
 		currentBasicBlock = createEmptyBasicBlock();
 	}
 
@@ -53,6 +55,7 @@ public class BasicBlockVisitor {
 			System.err.println("Please set root node to start parsing!");
 			return;
 		}
+		// ASTParser always generates block as the root
 		visitBlock(root);
 	}
 
@@ -82,24 +85,24 @@ public class BasicBlockVisitor {
 	private List<BasicBlock> visitIfStatement(ASTNode node) {
 		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
 		BasicBlock ifBlock = currentBasicBlock;
-		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
+		ifBlock.addNode(new Node(node, node.getNodeType()));
 
 		// reset current basic block to a new empty basic block
-		BasicBlock newBasicBlock = createEmptyBasicBlock();
 		// next true always points to its first child
-		ifBlock.setNextTrueBlock(newBasicBlock);
-		currentBasicBlock = newBasicBlock;
+		currentBasicBlock = createEmptyBasicBlock();
+		ifBlock.setNextTrueBlock(currentBasicBlock);
 		ASTNode thenStatement = ((IfStatement) node).getThenStatement();
-		List<BasicBlock> subUnhandled = visitChild(thenStatement);
-		unhandledBlocks.addAll(subUnhandled);
+		unhandledBlocks.addAll(visitChild(thenStatement));
+
 		ASTNode elseStatement = ((IfStatement) node).getElseStatement();
 		if (null != elseStatement) {
-			newBasicBlock = createEmptyBasicBlock();
+			currentBasicBlock = createEmptyBasicBlock();
 			// if there is else statement, next false always points to it
-			ifBlock.setNextFalseBlock(newBasicBlock);
-			currentBasicBlock = newBasicBlock;
+			ifBlock.setNextFalseBlock(currentBasicBlock);
 			unhandledBlocks.addAll(visitChild(elseStatement));
 		} else {
+			// if there is no else clause,
+			// then leave IF statement's false ref to its parent
 			unhandledBlocks.add(ifBlock);
 		}
 		return unhandledBlocks;
@@ -114,28 +117,7 @@ public class BasicBlockVisitor {
 	 * @param node
 	 */
 	private List<BasicBlock> visitWhileStatement(ASTNode node) {
-		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
-		BasicBlock whileBlock = currentBasicBlock;
-		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		BasicBlock newBasicBlock = createEmptyBasicBlock();
-		whileBlock.setNextTrueBlock(newBasicBlock);
-		currentBasicBlock = newBasicBlock;
-		ASTNode bodyStatements = ((WhileStatement) node).getBody();
-		unhandledBlocks = visitChild(bodyStatements);
-		if (unhandledBlocks.size() > 0) {
-			for (BasicBlock bb : unhandledBlocks) {
-				if (Helper.isControlNode(bb.lastNodeInList())) {
-					if (null == bb.getNextFalseBlock()) {
-						bb.setNextFalseBlock(whileBlock);
-					}
-				} else {
-					bb.setNextTrueBlock(whileBlock);
-				}
-			}
-		}
-		unhandledBlocks.clear();
-		unhandledBlocks.add(whileBlock);
-		return unhandledBlocks;
+		return visitLoopStatement(node);
 	}
 
 	/**
@@ -147,28 +129,7 @@ public class BasicBlockVisitor {
 	 * @param node
 	 */
 	private List<BasicBlock> visitDoStatement(ASTNode node) {
-		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
-		BasicBlock whileBlock = currentBasicBlock;
-		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		BasicBlock newBasicBlock = createEmptyBasicBlock();
-		whileBlock.setNextTrueBlock(newBasicBlock);
-		currentBasicBlock = newBasicBlock;
-		ASTNode bodyStatements = ((DoStatement) node).getBody();
-		unhandledBlocks = visitChild(bodyStatements);
-		if (unhandledBlocks.size() > 0) {
-			for (BasicBlock bb : unhandledBlocks) {
-				if (Helper.isControlNode(bb.lastNodeInList())) {
-					if (null == bb.getNextFalseBlock()) {
-						bb.setNextFalseBlock(whileBlock);
-					}
-				} else {
-					bb.setNextTrueBlock(whileBlock);
-				}
-			}
-		}
-		unhandledBlocks.clear();
-		unhandledBlocks.add(whileBlock);
-		return unhandledBlocks;
+		return visitLoopStatement(node);
 	}
 
 	/**
@@ -179,28 +140,7 @@ public class BasicBlockVisitor {
 	 * @param node
 	 */
 	private List<BasicBlock> visitForStatement(ASTNode node) {
-		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
-		BasicBlock forBlock = currentBasicBlock;
-		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		BasicBlock newBasicBlock = createEmptyBasicBlock();
-		forBlock.setNextTrueBlock(newBasicBlock);
-		currentBasicBlock = newBasicBlock;
-		ASTNode bodyStatements = ((ForStatement) node).getBody();
-		unhandledBlocks = visitChild(bodyStatements);
-		if (unhandledBlocks.size() > 0) {
-			for (BasicBlock bb : unhandledBlocks) {
-				if (Helper.isControlNode(bb.lastNodeInList())) {
-					if (null == bb.getNextFalseBlock()) {
-						bb.setNextFalseBlock(forBlock);
-					}
-				} else {
-					bb.setNextTrueBlock(forBlock);
-				}
-			}
-		}
-		unhandledBlocks.clear();
-		unhandledBlocks.add(forBlock);
-		return unhandledBlocks;
+		return visitLoopStatement(node);
 	}
 
 	/**
@@ -212,27 +152,64 @@ public class BasicBlockVisitor {
 	 * @param node
 	 */
 	private List<BasicBlock> visitEnhancedForStatement(ASTNode node) {
+		return visitLoopStatement(node);
+	}
+
+	/**
+	 * WHILE, DO WHILE, FOR, ENHANCED FOR have the same logic, so abstract it to
+	 * LOOP control node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private List<BasicBlock> visitLoopStatement(ASTNode node) {
 		List<BasicBlock> unhandledBlocks = new ArrayList<BasicBlock>();
-		BasicBlock forBlock = currentBasicBlock;
-		currentBasicBlock.addNode(new Node(node, node.getNodeType()));
-		BasicBlock newBasicBlock = createEmptyBasicBlock();
-		forBlock.setNextTrueBlock(newBasicBlock);
-		currentBasicBlock = newBasicBlock;
-		ASTNode bodyStatements = ((EnhancedForStatement) node).getBody();
+		BasicBlock loopBlock = currentBasicBlock;
+		loopBlock.addNode(new Node(node, node.getNodeType()));
+		currentBasicBlock = createEmptyBasicBlock();
+		loopBlock.setNextTrueBlock(currentBasicBlock);
+
+		ASTNode bodyStatements = null;
+		switch (node.getNodeType()) {
+		case ASTNode.WHILE_STATEMENT:
+			bodyStatements = ((WhileStatement) node).getBody();
+			break;
+		case ASTNode.DO_STATEMENT:
+			bodyStatements = ((DoStatement) node).getBody();
+			break;
+		case ASTNode.FOR_STATEMENT:
+			bodyStatements = ((ForStatement) node).getBody();
+			break;
+		case ASTNode.ENHANCED_FOR_STATEMENT:
+			bodyStatements = ((EnhancedForStatement) node).getBody();
+			break;
+		default:
+			System.err.println("Unknown loop type!");
+			return null;
+		}
+
 		unhandledBlocks = visitChild(bodyStatements);
+
 		if (unhandledBlocks.size() > 0) {
 			for (BasicBlock bb : unhandledBlocks) {
+				// if the unhandled node is a control node,
+				// we know that its next false ref should point to
+				// the loop control node
 				if (Helper.isControlNode(bb.lastNodeInList())) {
 					if (null == bb.getNextFalseBlock()) {
-						bb.setNextFalseBlock(forBlock);
+						bb.setNextFalseBlock(loopBlock);
 					}
 				} else {
-					bb.setNextTrueBlock(forBlock);
+					// otherwise it reaches the basic block
+					// only contains simple assignment(s)
+					bb.setNextTrueBlock(loopBlock);
 				}
 			}
 		}
+		// clear the list, insert current loop node into it
+		// because its false ref is unset
 		unhandledBlocks.clear();
-		unhandledBlocks.add(forBlock);
+		unhandledBlocks.add(loopBlock);
 		return unhandledBlocks;
 	}
 
@@ -304,7 +281,7 @@ public class BasicBlockVisitor {
 	 */
 	private BasicBlock createEmptyBasicBlock() {
 		BasicBlock basicblock = new BasicBlock();
-		basicblock.setID(getBasicBlockID());
+		basicblock.setID(generateBasicBlockID());
 		blocks.add(basicblock);
 		return basicblock;
 	}
@@ -314,7 +291,7 @@ public class BasicBlockVisitor {
 	 * 
 	 * @return
 	 */
-	private int getBasicBlockID() {
+	private int generateBasicBlockID() {
 		return blocks.size() + 1;
 	}
 
