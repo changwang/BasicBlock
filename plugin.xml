@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="BasicBlock.viewerContribution"
+            targetID="#CompilationUnitEditorContext">
+         <action
+               class="basicblock.action.FindBlockAction"
+               id="BasicBlock.findaction"
+               label="Basic Block"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+
+</plugin>
