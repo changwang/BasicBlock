@@ -643,13 +643,13 @@ public class BasicBlockVisitorTest {
 		BufferedReader br;
 		StringBuilder sb = new StringBuilder();
 		try {
-			// br = new BufferedReader(new FileReader(
-			// "C:\\eclipse\\workspace\\edu.wmich.basicblock\\src\\fixtures\\"
-			// + fixtureName));
+			 br = new BufferedReader(new FileReader(
+			 "C:\\eclipse\\workspace\\BasicBlock\\src\\fixtures\\"
+			 + fixtureName));
 
-			br = new BufferedReader(new FileReader(
-					"/Users/chang/eclipse/workspace/BasicBlock/src/fixtures/"
-							+ fixtureName));
+//			br = new BufferedReader(new FileReader(
+//					"/Users/chang/eclipse/workspace/BasicBlock/src/fixtures/"
+//							+ fixtureName));
 
 			String line = null;
 			while ((line = br.readLine()) != null) {

@@ -20,6 +20,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IEntityConnectionStyleProvider;
+import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
@@ -37,8 +38,8 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 	public static final String ID = "BasicBlock.basicblockview";
 
 	private GraphViewer gViewer = null;
-	private GraphNode errorNode = null;
 	private List<BasicBlock> blocks = null;
+	private GraphNode errorNode = null;
 
 	public BasicBlockView() {
 	}
@@ -52,21 +53,7 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 				ITextSelection ts = (ITextSelection) selection;
 				if (ts.getText().length() > 0) {
 					blocks = basicBlocksFromSource(ts.getText());
-					if (blocks.size() == 1) {
-						BasicBlock bb = blocks.get(0);
-						if (bb.getContent().size() < 1) {
-							if (errorNode != null)
-								errorNode.dispose();
-							errorNode = new GraphNode(
-									gViewer.getGraphControl(), SWT.NONE);
-							errorNode
-									.setText("Selected source code cannot be parsed");
-						} else {
-							drawHierarchy(blocks);
-						}
-					} else {
-						drawHierarchy(blocks);
-					}
+					drawHierarchy(blocks);
 				}
 			}
 		}
@@ -90,11 +77,20 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 	}
 
 	private void drawHierarchy(List<BasicBlock> blocks) {
-		if (errorNode != null)
-			errorNode.dispose();
 		BasicBlockConnectionRelationshipProvider bbncp = new BasicBlockConnectionRelationshipProvider(
 				blocks);
-		gViewer.setInput(bbncp.getConnections());
+		if (errorNode != null) {
+			errorNode.dispose();
+		}
+		if (bbncp.getConnections().size() == 0) {
+			// no connection in it
+			gViewer.setInput(null);
+			errorNode = new GraphNode(gViewer.getGraphControl(), SWT.NONE);
+			errorNode.setText("Selected source code cannot be parsed");
+		} else {
+			gViewer.setInput(bbncp.getConnections());
+		}
+
 	}
 
 	private void fillToolBar() {
@@ -171,7 +167,13 @@ class BasicBlockConnectionRelationshipProvider {
 
 		// create all relationships between all basic blocks
 		if (nodes.size() == 1) {
-			connections.add(new BBConnection("", nodes.get(0), null));
+			// if the source code cannot be parsed, there is an empty basic
+			// block with no node in it
+			BasicBlock bb = nodes.get(0);
+			if (bb.getContent().size() != 0) {
+				connections.add(new BBConnection("", nodes.get(0), null));
+			}
+
 		} else if (nodes.size() > 1) {
 			for (BasicBlock basicBlock : nodes) {
 				if (basicBlock.getNextTrueBlock() != null) {
@@ -214,7 +216,7 @@ class BasicBlockContentProvider extends ArrayContentProvider implements
 }
 
 class BasicBlockLabelProvider extends LabelProvider implements
-		IEntityConnectionStyleProvider {
+		IEntityConnectionStyleProvider, IEntityStyleProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof BasicBlock) {
@@ -248,10 +250,44 @@ class BasicBlockLabelProvider extends LabelProvider implements
 
 	@Override
 	public IFigure getTooltip(Object entity) {
-		System.out.println(entity);
 		if (entity instanceof BasicBlock) {
 			return new ContentFigure(((BasicBlock) entity).getContent());
 		}
 		return null;
+	}
+
+	@Override
+	public Color getNodeHighlightColor(Object entity) {
+		return null;
+	}
+
+	@Override
+	public Color getBorderColor(Object entity) {
+		return null;
+	}
+
+	@Override
+	public Color getBorderHighlightColor(Object entity) {
+		return null;
+	}
+
+	@Override
+	public int getBorderWidth(Object entity) {
+		return 0;
+	}
+
+	@Override
+	public Color getBackgroundColour(Object entity) {
+		return null;
+	}
+
+	@Override
+	public Color getForegroundColour(Object entity) {
+		return null;
+	}
+
+	@Override
+	public boolean fisheyeNode(Object entity) {
+		return false;
 	}
 }
