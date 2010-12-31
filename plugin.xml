@@ -7,12 +7,26 @@
             id="BasicBlock.viewerContribution"
             targetID="#CompilationUnitEditorContext">
          <action
-               class="basicblock.action.FindBlockAction"
+               class="basicblock.actions.FindBlockAction"
                id="BasicBlock.findaction"
                label="Basic Block"
                menubarPath="additions">
          </action>
       </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="BasicBlock.basicblockcategory"
+            class="basicblock.views.BasicBlockView"
+            id="BasicBlock.basicblockview"
+            name="Basic Block"
+            restorable="true">
+      </view>
+      <category
+            id="BasicBlock.basicblockcategory"
+            name="BasicBlockCategory">
+      </category>
    </extension>
 
 </plugin>
