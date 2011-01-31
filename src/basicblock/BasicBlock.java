@@ -72,12 +72,16 @@ public class BasicBlock {
 		return null;
 	}
 
+	public String toString() {
+		return "" + getID();
+	}
+
 	/**
 	 * make the basic block readable in console
 	 */
-	public String toString() {
+	public String toString1() {
 		StringBuilder sb = new StringBuilder();
-		//sb.append(this.getID());
+		// sb.append(this.getID());
 		List<Node> nodes = this.getContent();
 		for (Node node : nodes) {
 			switch (node.getType()) {
@@ -121,8 +125,8 @@ public class BasicBlock {
 		if (null == getNextFalseBlock()) {
 			sb.append("There is no next true block ref\n");
 		} else {
-			sb.append("Next False Block is: Block " + getNextFalseBlock().getID()
-					+ "\n");
+			sb.append("Next False Block is: Block "
+					+ getNextFalseBlock().getID() + "\n");
 		}
 		return sb.toString();
 	}

@@ -12,6 +12,12 @@
                label="Basic Block"
                menubarPath="additions">
          </action>
+         <action
+               class="basicblock.actions.DUAction"
+               id="BasicBlock.dufinderaction"
+               label="DU Finder"
+               menubarPath="additions">
+         </action>
       </viewerContribution>
    </extension>
    <extension

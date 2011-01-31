@@ -1,5 +1,17 @@
 package basicblock;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -18,11 +30,31 @@ public class Helper {
 	 * @return
 	 */
 	public static ASTParser getParser(String source) {
+
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setKind(ASTParser.K_STATEMENTS);
+		// parser.setProject(getProject());
 		parser.setSource(source.toCharArray());
 		parser.setResolveBindings(true);
 		return parser;
+	}
+
+	public static IJavaProject getProject() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject[] projects = root.getProjects();
+		for (IProject project : projects) {
+			try {
+				if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+					IJavaProject javaProject = JavaCore.create(project);
+					return javaProject;
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return null;
 	}
 
 	/**
@@ -67,5 +99,26 @@ public class Helper {
 		default:
 			return false;
 		}
+	}
+
+	public static String contentFromFixture(String fixtureName) {
+		BufferedReader br;
+		StringBuilder sb = new StringBuilder();
+		try {
+			br = new BufferedReader(new FileReader(
+					"/Users/chang/eclipse/workspace/BasicBlock/src/fixtures/"
+							+ fixtureName));
+
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
 	}
 }

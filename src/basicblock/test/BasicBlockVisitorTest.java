@@ -1,11 +1,8 @@
 package basicblock.test;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.junit.After;
@@ -25,7 +22,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void assignmentBlock() {
-		String assignmentBlock = contentFromFixture("assignmentBlock");
+		String assignmentBlock = Helper.contentFromFixture("assignmentBlock");
 		ASTNode node = Helper.getParser(assignmentBlock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -42,7 +39,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void assignIf() {
-		String assignif1 = contentFromFixture("assignif");
+		String assignif1 = Helper.contentFromFixture("assignif");
 		ASTNode node = Helper.getParser(assignif1).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -69,7 +66,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void assignIfElse() {
-		String assignifelse = contentFromFixture("assignifelse");
+		String assignifelse = Helper.contentFromFixture("assignifelse");
 		ASTNode node = Helper.getParser(assignifelse).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -111,7 +108,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement1() {
-		String ifblock = contentFromFixture("ifblock1");
+		String ifblock = Helper.contentFromFixture("ifblock1");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -129,7 +126,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement2() {
-		String ifblock = contentFromFixture("ifblock2");
+		String ifblock = Helper.contentFromFixture("ifblock2");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -147,7 +144,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement3() {
-		String ifblock = contentFromFixture("ifblock3");
+		String ifblock = Helper.contentFromFixture("ifblock3");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -169,7 +166,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement4() {
-		String ifblock = contentFromFixture("ifblock4");
+		String ifblock = Helper.contentFromFixture("ifblock4");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -201,7 +198,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement5() {
-		String ifblock = contentFromFixture("ifblock5");
+		String ifblock = Helper.contentFromFixture("ifblock5");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -223,7 +220,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement6() {
-		String ifblock = contentFromFixture("ifblock6");
+		String ifblock = Helper.contentFromFixture("ifblock6");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -250,7 +247,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifStatement7() {
-		String ifblock = contentFromFixture("ifblock7");
+		String ifblock = Helper.contentFromFixture("ifblock7");
 		ASTNode node = Helper.getParser(ifblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -277,7 +274,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifElseStatement1() {
-		String ifelseblock = contentFromFixture("ifelseblock");
+		String ifelseblock = Helper.contentFromFixture("ifelseblock");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -299,7 +296,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifElseStatement2() {
-		String ifelseblock = contentFromFixture("ifelseblock2");
+		String ifelseblock = Helper.contentFromFixture("ifelseblock2");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -321,7 +318,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void ifElseStatement3() {
-		String ifelseblock = contentFromFixture("ifelseblock3");
+		String ifelseblock = Helper.contentFromFixture("ifelseblock3");
 		ASTNode node = Helper.getParser(ifelseblock).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -369,7 +366,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void whileStatement1() {
-		String whileblock1 = contentFromFixture("whileblock1");
+		String whileblock1 = Helper.contentFromFixture("whileblock1");
 		ASTNode node = Helper.getParser(whileblock1).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -403,7 +400,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void whileStatement2() {
-		String whileblock2 = contentFromFixture("whileblock2");
+		String whileblock2 = Helper.contentFromFixture("whileblock2");
 		ASTNode node = Helper.getParser(whileblock2).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -427,7 +424,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void whileStatement3() {
-		String whileblock3 = contentFromFixture("whileblock3");
+		String whileblock3 = Helper.contentFromFixture("whileblock3");
 		ASTNode node = Helper.getParser(whileblock3).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -455,7 +452,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void whileStatement4() {
-		String whileblock4 = contentFromFixture("whileblock4");
+		String whileblock4 = Helper.contentFromFixture("whileblock4");
 		ASTNode node = Helper.getParser(whileblock4).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -492,7 +489,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void forStatement1() {
-		String forblock1 = contentFromFixture("forblock1");
+		String forblock1 = Helper.contentFromFixture("forblock1");
 		ASTNode node = Helper.getParser(forblock1).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -511,7 +508,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void forStatement2() {
-		String forblock2 = contentFromFixture("forblock2");
+		String forblock2 = Helper.contentFromFixture("forblock2");
 		ASTNode node = Helper.getParser(forblock2).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -544,7 +541,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void mix1() {
-		String mix1 = contentFromFixture("mixblock1");
+		String mix1 = Helper.contentFromFixture("mixblock1");
 		ASTNode node = Helper.getParser(mix1).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -572,7 +569,7 @@ public class BasicBlockVisitorTest {
 
 	@Test
 	public void mix2() {
-		String mix2 = contentFromFixture("mixblock2");
+		String mix2 = Helper.contentFromFixture("mixblock2");
 		ASTNode node = Helper.getParser(mix2).createAST(null);
 		assertNotNull(node);
 		bbv.setRoot(node);
@@ -637,31 +634,6 @@ public class BasicBlockVisitorTest {
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	private String contentFromFixture(String fixtureName) {
-		BufferedReader br;
-		StringBuilder sb = new StringBuilder();
-		try {
-			 br = new BufferedReader(new FileReader(
-			 "C:\\eclipse\\workspace\\BasicBlock\\src\\fixtures\\"
-			 + fixtureName));
-
-//			br = new BufferedReader(new FileReader(
-//					"/Users/chang/eclipse/workspace/BasicBlock/src/fixtures/"
-//							+ fixtureName));
-
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return sb.toString();
 	}
 
 }

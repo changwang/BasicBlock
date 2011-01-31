@@ -1,25 +1,13 @@
 package basicblock.actions;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.handlers.ShowViewHandler;
 
 import basicblock.Activator;
-import basicblock.BasicBlock;
-import basicblock.BasicBlockVisitor;
-import basicblock.Helper;
 import basicblock.views.BasicBlockView;
 
 public class FindBlockAction implements IEditorActionDelegate {
@@ -69,15 +57,15 @@ public class FindBlockAction implements IEditorActionDelegate {
 
 	}
 
-	private void basicBlockPrinter(List<BasicBlock> blocks) {
-		int bindex = 0;
-		for (Iterator<BasicBlock> iter = blocks.iterator(); iter.hasNext();) {
-			String title = "=========== Block " + (++bindex) + " ===========";
-			System.out.println(title);
-			System.out.print(iter.next());
-			System.out.println("===============================");
-			System.out.println();
-		}
-	}
+//	private void basicBlockPrinter(List<BasicBlock> blocks) {
+//		int bindex = 0;
+//		for (Iterator<BasicBlock> iter = blocks.iterator(); iter.hasNext();) {
+//			String title = "=========== Block " + (++bindex) + " ===========";
+//			System.out.println(title);
+//			System.out.print(iter.next());
+//			System.out.println("===============================");
+//			System.out.println();
+//		}
+//	}
 
 }
