@@ -32,10 +32,10 @@ public class Helper {
 	public static ASTParser getParser(String source) {
 
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setKind(ASTParser.K_STATEMENTS);
-		// parser.setProject(getProject());
+		//parser.setKind(ASTParser.K_STATEMENTS);
+		parser.setProject(getProject());
 		parser.setSource(source.toCharArray());
-		parser.setResolveBindings(true);
+		//parser.setResolveBindings(true);
 		return parser;
 	}
 

@@ -8,10 +8,7 @@ public class Node {
 	private int type;
 
 	public Node(ASTNode aNode, int type) {
-		if (null == aNode) {
-			System.err.println("ASTNode cannot be null");
-			return;
-		}
+		assert aNode != null;
 		this.astNode = aNode;
 		this.type = aNode.getNodeType();
 	}

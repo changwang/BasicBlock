@@ -44,6 +44,7 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 	public BasicBlockView() {
 	}
 
+	/*
 	private ISelectionListener listener = new ISelectionListener() {
 
 		@Override
@@ -58,6 +59,7 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 			}
 		}
 	};
+	*/
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -72,8 +74,8 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 
 		fillToolBar();
 
-		getSite().getWorkbenchWindow().getSelectionService()
-				.addPostSelectionListener(listener);
+		//getSite().getWorkbenchWindow().getSelectionService()
+		//		.addPostSelectionListener(listener);
 	}
 
 	private void drawHierarchy(List<BasicBlock> blocks) {
@@ -119,8 +121,8 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
 
 	@Override
 	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService()
-				.removePostSelectionListener(listener);
+		//getSite().getWorkbenchWindow().getSelectionService()
+		//		.removePostSelectionListener(listener);
 		super.dispose();
 	}
 
@@ -130,7 +132,7 @@ public class BasicBlockView extends ViewPart implements IZoomableWorkbenchPart {
  * It is a simple relationship between two basic blocks, the main point is I
  * want to set the true/false label between two basic blocks.
  * 
- * @author chang
+ * @author chang wang
  * 
  */
 class BBConnection {
